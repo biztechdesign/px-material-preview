@@ -1,8 +1,8 @@
 {
-  "Iridescense": {
+  "Iridescence": {
     "uuid": "ff02e329-9b27-4722-bdba-72197fce4a7b",
     "type": "MeshPhysicalMaterial",
-    "name": "Matte",
+    "name": "Iridescence",
     "color": 16777215,
     "roughness": 0.3,
     "metalness": 0.8,
@@ -12,21 +12,28 @@
     "emissive": 0,
     "emissiveIntensity": 0,
     "specularIntensity": 1,
-    "specularColor": 0,
+    "specularColor": 16777215,
     "clearcoat": 0.95,
     "clearcoatRoughness": 0.02,
     "dispersion": 0,
     "iridescence": 1,
     "iridescenceIOR": 2.2,
-    "iridescenceThicknessRange": [100,400],
+    "iridescenceThicknessRange": [
+      100,
+      400
+    ],
     "anisotropy": 0,
     "anisotropyRotation": 0,
-    "envMapRotation": [0,0,0,
-      "XYZ"],
+    "envMapRotation": [
+      0,
+      0,
+      0,
+      "XYZ"
+    ],
     "envMapIntensity": 1,
     "reflectivity": 1,
-    "transmission": 0.1,
-    "thickness": 0.5,
+    "transmission": 0,
+    "thickness": 0,
     "attenuationColor": 16777215,
     "side": 2,
     "blendColor": 0
@@ -48,12 +55,20 @@
     "clearcoat": 1.0,
     "clearcoatRoughness": 0.0,
     "dispersion": 0,
-    "iridescence": 1.0,
+    "iridescence": 0.0,
     "iridescenceIOR": 1.0,
-    "iridescenceThicknessRange": [0, 0],
+    "iridescenceThicknessRange": [
+      0,
+      0
+    ],
     "anisotropy": 0,
     "anisotropyRotation": 0,
-    "envMapRotation": [0, 0, 0, "XYZ"],
+    "envMapRotation": [
+      0,
+      0,
+      0,
+      "XYZ"
+    ],
     "envMapIntensity": 1.5,
     "reflectivity": 1.0,
     "transmission": 0.0,
@@ -81,10 +96,18 @@
     "dispersion": 0,
     "iridescence": 0.0,
     "iridescenceIOR": 1.0,
-    "iridescenceThicknessRange": [0, 0],
+    "iridescenceThicknessRange": [
+      0,
+      0
+    ],
     "anisotropy": 0,
     "anisotropyRotation": 0,
-    "envMapRotation": [0, 0, 0, "XYZ"],
+    "envMapRotation": [
+      0,
+      0,
+      0,
+      "XYZ"
+    ],
     "envMapIntensity": 0.5,
     "reflectivity": 0.2,
     "transmission": 0.0,
@@ -112,10 +135,18 @@
     "dispersion": 0,
     "iridescence": 0.0,
     "iridescenceIOR": 1.0,
-    "iridescenceThicknessRange": [0, 0],
+    "iridescenceThicknessRange": [
+      0,
+      0
+    ],
     "anisotropy": 0,
     "anisotropyRotation": 0,
-    "envMapRotation": [0, 0, 0, "XYZ"],
+    "envMapRotation": [
+      0,
+      0,
+      0,
+      "XYZ"
+    ],
     "envMapIntensity": 1.4,
     "reflectivity": 0.95,
     "transmission": 0.0,
@@ -123,7 +154,7 @@
     "attenuationColor": 16777215,
     "side": 2,
     "blendColor": 0,
-    "map": "textures/ombre_metallic_3color.png"
+    "map": "assets/textures/ombre_metallic_3color.png"
   },
   "Iridescent Metallic": {
     "uuid": "ab12cd34-ef56-7890-1234-56789abcdef0",
@@ -144,14 +175,22 @@
     "dispersion": 0,
     "iridescence": 1.0,
     "iridescenceIOR": 2.6,
-    "iridescenceThicknessRange": [100, 2500],
+    "iridescenceThicknessRange": [
+      100,
+      2500
+    ],
     "anisotropy": 0,
     "anisotropyRotation": 0,
-    "envMapRotation": [0, 0, 0, "XYZ"],
+    "envMapRotation": [
+      0,
+      0,
+      0,
+      "XYZ"
+    ],
     "envMapIntensity": 1.3,
     "reflectivity": 0.95,
-    "transmission": 0.05,
-    "thickness": 0.3,
+    "transmission": 0,
+    "thickness": 0,
     "attenuationColor": 16777215,
     "side": 2,
     "blendColor": 0
@@ -175,18 +214,25 @@
     "dispersion": 0,
     "iridescence": 1.0,
     "iridescenceIOR": 2.5,
-    "iridescenceThicknessRange": [400, 800],
+    "iridescenceThicknessRange": [
+      400,
+      800
+    ],
     "anisotropy": 0,
     "anisotropyRotation": 0,
-    "envMapRotation": [0, 0, 0, "XYZ"],
+    "envMapRotation": [
+      0,
+      0,
+      0,
+      "XYZ"
+    ],
     "envMapIntensity": 2.0,
     "reflectivity": 0.15,
     "transmission": 0.1,
     "thickness": 0.1,
     "attenuationColor": 16777215,
     "side": 2,
-    "blendColor": 0,
-    "Alpha": 0
+    "blendColor": 0
   },
   "Ombre Matte": {
     "uuid": "e0f1a2b3-c4d5-6789-0abc-def123456789",
@@ -207,10 +253,18 @@
     "dispersion": 0,
     "iridescence": 0.0,
     "iridescenceIOR": 1.0,
-    "iridescenceThicknessRange": [0, 0],
+    "iridescenceThicknessRange": [
+      0,
+      0
+    ],
     "anisotropy": 0,
     "anisotropyRotation": 0,
-    "envMapRotation": [0, 0, 0, "XYZ"],
+    "envMapRotation": [
+      0,
+      0,
+      0,
+      "XYZ"
+    ],
     "envMapIntensity": 0.3,
     "reflectivity": 0.05,
     "transmission": 0.0,
@@ -218,7 +272,7 @@
     "attenuationColor": 16777215,
     "side": 2,
     "blendColor": 0,
-    "map": "textures/ombre_matte_gradient.png"
+    "map": "assets/textures/ombre_matte_gradient.png"
   },
   "Pearlescent": {
     "uuid": "fedcba98-7654-3210-bcde-a9876543210f",
@@ -239,10 +293,18 @@
     "dispersion": 0,
     "iridescence": 0.8,
     "iridescenceIOR": 2.1,
-    "iridescenceThicknessRange": [80, 350],
+    "iridescenceThicknessRange": [
+      80,
+      350
+    ],
     "anisotropy": 0,
     "anisotropyRotation": 0,
-    "envMapRotation": [0, 0, 0, "XYZ"],
+    "envMapRotation": [
+      0,
+      0,
+      0,
+      "XYZ"
+    ],
     "envMapIntensity": 1.3,
     "reflectivity": 0.5,
     "transmission": 0.03,
@@ -270,10 +332,18 @@
     "dispersion": 0,
     "iridescence": 0.0,
     "iridescenceIOR": 1.0,
-    "iridescenceThicknessRange": [0, 0],
+    "iridescenceThicknessRange": [
+      0,
+      0
+    ],
     "anisotropy": 0,
     "anisotropyRotation": 0,
-    "envMapRotation": [0, 0, 0, "XYZ"],
+    "envMapRotation": [
+      0,
+      0,
+      0,
+      "XYZ"
+    ],
     "envMapIntensity": 0.2,
     "reflectivity": 0.03,
     "transmission": 0.0,
@@ -301,10 +371,18 @@
     "dispersion": 0,
     "iridescence": 0.0,
     "iridescenceIOR": 1.0,
-    "iridescenceThicknessRange": [0, 0],
+    "iridescenceThicknessRange": [
+      0,
+      0
+    ],
     "anisotropy": 0,
     "anisotropyRotation": 0,
-    "envMapRotation": [0, 0, 0, "XYZ"],
+    "envMapRotation": [
+      0,
+      0,
+      0,
+      "XYZ"
+    ],
     "envMapIntensity": 0.1,
     "reflectivity": 0.02,
     "transmission": 0.0,
@@ -332,10 +410,18 @@
     "dispersion": 0,
     "iridescence": 0.0,
     "iridescenceIOR": 1.0,
-    "iridescenceThicknessRange": [0, 0],
+    "iridescenceThicknessRange": [
+      0,
+      0
+    ],
     "anisotropy": 0,
     "anisotropyRotation": 0,
-    "envMapRotation": [0, 0, 0, "XYZ"],
+    "envMapRotation": [
+      0,
+      0,
+      0,
+      "XYZ"
+    ],
     "envMapIntensity": 0.15,
     "reflectivity": 0.02,
     "transmission": 0.0,
@@ -344,7 +430,10 @@
     "side": 2,
     "blendColor": 0,
     "normalMap": "assets/textures/Sandblast1.png",
-    "normalScale": [1.2, 1.2]
+    "normalScale": [
+      1.2,
+      1.2
+    ]
   },
   "Water Transfer": {
     "uuid": "c1d2e3f4-a5b6-7890-1c2d-3e4f5a6b7c8d",
@@ -365,10 +454,18 @@
     "dispersion": 0,
     "iridescence": 0.0,
     "iridescenceIOR": 1.0,
-    "iridescenceThicknessRange": [0, 0],
+    "iridescenceThicknessRange": [
+      0,
+      0
+    ],
     "anisotropy": 0,
     "anisotropyRotation": 0,
-    "envMapRotation": [0, 0, 0, "XYZ"],
+    "envMapRotation": [
+      0,
+      0,
+      0,
+      "XYZ"
+    ],
     "envMapIntensity": 0.9,
     "reflectivity": 0.3,
     "transmission": 0.0,
@@ -376,9 +473,12 @@
     "attenuationColor": 16777215,
     "side": 2,
     "blendColor": 0,
-    "map": "textures/water_transfer_pattern.png",
-    "normalMap": "textures/water_transfer_normal.png",
-    "normalScale": [0.8, 0.8]
+    "map": "assets/textures/water_transfer_pattern.png",
+    "normalMap": "assets/textures/water_transfer_normal.png",
+    "normalScale": [
+      0.8,
+      0.8
+    ]
   },
   "Standard Natural": {
     "uuid": "c4d3e2f1-a0b9-8765-4321-0fedcba98765",
@@ -399,10 +499,18 @@
     "dispersion": 0,
     "iridescence": 0.0,
     "iridescenceIOR": 1.0,
-    "iridescenceThicknessRange": [0, 0],
+    "iridescenceThicknessRange": [
+      0,
+      0
+    ],
     "anisotropy": 0,
     "anisotropyRotation": 0,
-    "envMapRotation": [0, 0, 0, "XYZ"],
+    "envMapRotation": [
+      0,
+      0,
+      0,
+      "XYZ"
+    ],
     "envMapIntensity": 0.8,
     "reflectivity": 0.1,
     "transmission": 0.5,
@@ -430,10 +538,18 @@
     "dispersion": 0,
     "iridescence": 0.0,
     "iridescenceIOR": 1.0,
-    "iridescenceThicknessRange": [0, 0],
+    "iridescenceThicknessRange": [
+      0,
+      0
+    ],
     "anisotropy": 0,
     "anisotropyRotation": 0,
-    "envMapRotation": [0, 0, 0, "XYZ"],
+    "envMapRotation": [
+      0,
+      0,
+      0,
+      "XYZ"
+    ],
     "envMapIntensity": 0.2,
     "reflectivity": 0.03,
     "transmission": 0.65,
@@ -461,10 +577,18 @@
     "dispersion": 0,
     "iridescence": 0.8,
     "iridescenceIOR": 2.0,
-    "iridescenceThicknessRange": [100, 400],
+    "iridescenceThicknessRange": [
+      100,
+      400
+    ],
     "anisotropy": 0,
     "anisotropyRotation": 0,
-    "envMapRotation": [0, 0, 0, "XYZ"],
+    "envMapRotation": [
+      0,
+      0,
+      0,
+      "XYZ"
+    ],
     "envMapIntensity": 1.0,
     "reflectivity": 0.3,
     "transmission": 0.08,
