@@ -91,17 +91,22 @@
       .map(function (a) { return decodeURIComponent(a.getAttribute("href") || ""); })
       .filter(function (h) { return /\.hdr$/i.test(h) && h.indexOf("/") === -1; });
   }
-  fetch("assets/environments/environments.json")
-    .then(function (r) { return r.ok ? r.json() : Promise.reject(r.status); })
-    .then(function (j) {
-      if (j && j.files && j.files.length) applyMap(buildMap(j.files));
+  // The FOLDER is the truth wherever the server can list it (local dev):
+  // add or delete an .hdr and refresh - nothing else to touch. The manifest
+  // only takes over on servers with no listings (GitHub Pages and co.), so
+  // keep it fresh with make_env_manifest.py before deploying.
+  fetch("assets/environments/")
+    .then(function (r) { return r.ok ? r.text() : Promise.reject(r.status); })
+    .then(function (html) {
+      var files = hdrLinksFromListing(html);
+      if (!files.length) throw new Error("no listing");
+      applyMap(buildMap(files));
     })
     .catch(function () {
-      fetch("assets/environments/")
-        .then(function (r) { return r.ok ? r.text() : Promise.reject(r.status); })
-        .then(function (html) {
-          var files = hdrLinksFromListing(html);
-          if (files.length) applyMap(buildMap(files));
+      fetch("assets/environments/environments.json")
+        .then(function (r) { return r.ok ? r.json() : Promise.reject(r.status); })
+        .then(function (j) {
+          if (j && j.files && j.files.length) applyMap(buildMap(j.files));
         })
         .catch(function (e) {
           console.warn("environment discovery unavailable, using built-in list:", e);
