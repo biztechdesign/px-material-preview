@@ -132,9 +132,10 @@
     var box = document.createElement("div");
     box.id = "env-picker";
     box.style.cssText =
+      "position:sticky;top:0;z-index:1000;" +   // stays visible while scrolling
       "display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:8px;" +
       "padding:10px;background:#fff;border-bottom:1px solid #ddd;" +
-      "font:13px system-ui,sans-serif";
+      "box-shadow:0 1px 6px rgba(0,0,0,.08);font:13px system-ui,sans-serif";
     if (!CONFIG.showControls) box.style.display = "none";
     var envOnly = CONFIG.showControls === "env";
 
