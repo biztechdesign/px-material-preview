@@ -25,7 +25,9 @@
     // canvas backdrop behind the product. The app's own clear colour is #F2F2F2,
     // which near-white materials disappear into; this soft grey vignette keeps
     // them readable. Any CSS background value works; null = keep the app's.
-    backdrop: "radial-gradient(circle at 50% 35%, #e3e6ea 0%, #bfc5cd 55%, #9aa1ab 100%)",
+    // white-and-grey only, to match the PX Designer Tool palette: white centre
+    // falling to a neutral grey edge - no colour tint anywhere.
+    backdrop: "radial-gradient(circle at 50% 35%, #ffffff 0%, #ededed 50%, #cccccc 100%)",
     // soft contact shadow under the product (fake AO). 0 = off; 0.3-0.5 typical.
     groundShadow: 0.4,
     showControls: false // preview build: locked look, no controls
