@@ -214,10 +214,30 @@
       v.viewers.forEach(function (o) {
         o.scene.environmentIntensity = window.__ENV_INTENSITY__;
         if (CONFIG.backdrop) {
-          // transparent clear so the CSS backdrop shows through the canvas
-          o.renderer.setClearColor(0, 0);
-          if (o.canvas && o.canvas.parentElement)
-            o.canvas.parentElement.style.background = CONFIG.backdrop;
+          // the gradient must live INSIDE the scene, not as CSS behind a
+          // transparent canvas: clear/translucent finishes (transmission)
+          // refract whatever the renderer sees behind the product, and a
+          // transparent clear makes them refract a black void. A background
+          // texture gives them the real grey studio to look through.
+          try {
+            var bcv = document.createElement("canvas");
+            bcv.width = bcv.height = 512;
+            var bctx = bcv.getContext("2d");
+            var bg = bctx.createRadialGradient(256, 180, 40, 256, 256, 360);
+            bg.addColorStop(0, "#ffffff");
+            bg.addColorStop(0.5, "#ededed");
+            bg.addColorStop(1, "#cccccc");
+            bctx.fillStyle = bg;
+            bctx.fillRect(0, 0, 512, 512);
+            var btex = new (o.scene.environment.constructor)(bcv);
+            btex.colorSpace = "srgb";
+            btex.needsUpdate = true;
+            o.scene.background = btex;
+          } catch (e) {                    // fall back to the CSS route
+            o.renderer.setClearColor(0, 0);
+            if (o.canvas && o.canvas.parentElement)
+              o.canvas.parentElement.style.background = CONFIG.backdrop;
+          }
         }
       });
       rerender();
