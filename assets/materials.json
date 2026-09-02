@@ -279,7 +279,7 @@
     "side": 2,
     "blendColor": 0,
     "map": "assets/textures/ombre_matte_gradient.png",
-    "description": "Matte colours fading from one shade at the base to another at the top. Colours are chosen in the tool."
+    "description": "Matte colours fading from one shade into another. Colours are chosen in the tool."
   },
   "Pearlescent": {
     "uuid": "fedcba98-7654-3210-bcde-a9876543210f",

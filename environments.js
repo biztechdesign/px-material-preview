@@ -269,8 +269,12 @@
         var dd = document.createElement("div");
         dd.className = "mat-desc";
         dd.textContent = def.description;
+        // fixed two-line slot so every card is the same height and the
+        // grid rows stay aligned no matter how long each description is
         dd.style.cssText = "font:12px/1.45 system-ui,sans-serif;color:#777;" +
-          "text-align:center;max-width:280px;margin:-2px auto 8px;padding:0 12px";
+          "text-align:center;max-width:280px;margin:-2px auto 8px;padding:0 12px;" +
+          "height:35px;overflow:hidden;display:-webkit-box;" +
+          "-webkit-line-clamp:2;-webkit-box-orient:vertical";
         h.insertAdjacentElement("afterend", dd);
       });
       v.viewers.forEach(function (o) {
