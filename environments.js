@@ -132,7 +132,7 @@
     var box = document.createElement("div");
     box.id = "env-picker";
     box.style.cssText =
-      "display:flex;justify-content:center;align-items:center;gap:8px;" +
+      "display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:8px;" +
       "padding:10px;background:#fff;border-bottom:1px solid #ddd;" +
       "font:13px system-ui,sans-serif";
     if (!CONFIG.showControls) box.style.display = "none";
@@ -142,29 +142,36 @@
     label.textContent = "Environment";
     label.htmlFor = "env-picker-select";
 
-    var sel = document.createElement("select");
-    sel.id = "env-picker-select";
-    sel.style.cssText = "font:inherit;padding:3px 6px;max-width:260px";
+    // one radio per environment instead of a dropdown
+    var radios = document.createElement("div");
+    radios.id = "env-picker-select";
+    radios.style.cssText = "display:flex;flex-wrap:wrap;gap:4px 14px;align-items:center";
 
     function refreshOptions() {
-      sel.replaceChildren();
+      radios.replaceChildren();
       Object.keys(v.environments).forEach(function (name) {
-        var o = document.createElement("option");
-        o.value = name;
-        o.textContent = name;
-        sel.appendChild(o);
+        var lab = document.createElement("label");
+        lab.style.cssText = "display:flex;gap:4px;align-items:center;cursor:pointer;white-space:nowrap";
+        var r = document.createElement("input");
+        r.type = "radio";
+        r.name = "env-picker-radio";
+        r.value = name;
+        r.checked = name === v.selectedEnvironment;
+        r.addEventListener("change", function () {
+          if (!r.checked) return;
+          var all = radios.querySelectorAll("input");
+          all.forEach(function (x) { x.disabled = true; });   // one load at a time
+          Promise.resolve(v.onEnvironmentChange({ value: name }))
+            .catch(function (e) { console.error("environment change failed:", e); })
+            .finally(function () { all.forEach(function (x) { x.disabled = false; }); });
+        });
+        lab.appendChild(r);
+        lab.appendChild(document.createTextNode(name));
+        radios.appendChild(lab);
       });
-      sel.value = v.selectedEnvironment;
     }
     refreshOptions();
     window.__ENV_REFRESH__ = refreshOptions;   // re-run when discovery lands
-
-    sel.addEventListener("change", function () {
-      sel.disabled = true;          // one load at a time
-      Promise.resolve(v.onEnvironmentChange({ value: sel.value }))
-        .catch(function (e) { console.error("environment change failed:", e); })
-        .finally(function () { sel.disabled = false; });
-    });
 
     function rerender() {           // make changes visible without waiting for a drag
       v.viewers.forEach(function (o) {
@@ -347,7 +354,7 @@
     }
 
     box.appendChild(label);
-    box.appendChild(sel);
+    box.appendChild(radios);
     if (!envOnly) {                  // tuning stays internal in "env" mode
       box.appendChild(intLabel);
       box.appendChild(slider);
