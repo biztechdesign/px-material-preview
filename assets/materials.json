@@ -36,7 +36,8 @@
     "thickness": 0,
     "attenuationColor": 16777215,
     "side": 2,
-    "blendColor": 0
+    "blendColor": 0,
+    "description": "Colour-shifting coating - the hue changes with the viewing angle."
   },
   "Mirror Plated Chrome": {
     "uuid": "f1e2d3c4-b5a6-7980-1234-56789abcdef0",
@@ -75,7 +76,8 @@
     "thickness": 0.0,
     "attenuationColor": 16777215,
     "side": 2,
-    "blendColor": 0
+    "blendColor": 0,
+    "description": "High-gloss chrome with a mirror-like, highly reflective surface."
   },
   "Matte Metallic": {
     "uuid": "b8c7d6e5-f4a3-2198-7654-3210fedcba98",
@@ -114,7 +116,8 @@
     "thickness": 0.0,
     "attenuationColor": 16777215,
     "side": 2,
-    "blendColor": 0
+    "blendColor": 0,
+    "description": "The look of metal with a muted, low-gloss surface."
   },
   "Ombre Metallic Chrome": {
     "uuid": "c3d4e5f6-a7b8-9c0d-1e2f-3a4b5c6d7e8f",
@@ -154,7 +157,8 @@
     "attenuationColor": 16777215,
     "side": 2,
     "blendColor": 0,
-    "map": "assets/textures/ombre_metallic_3color.png"
+    "map": "assets/textures/ombre_metallic_3color.png",
+    "description": "Three metallic shades blending into one another. Colours are chosen in the tool."
   },
   "Iridescent Metallic": {
     "uuid": "ab12cd34-ef56-7890-1234-56789abcdef0",
@@ -193,7 +197,8 @@
     "thickness": 0,
     "attenuationColor": 16777215,
     "side": 2,
-    "blendColor": 0
+    "blendColor": 0,
+    "description": "Reflective chrome base whose colours shift as the angle changes."
   },
   "Clear Iridescent": {
     "uuid": "0f1e2d3c-4b5a-6978-90ab-cdef12345678",
@@ -232,7 +237,8 @@
     "thickness": 0.1,
     "attenuationColor": 16777215,
     "side": 2,
-    "blendColor": 0
+    "blendColor": 0,
+    "description": "Clear surface that shifts colour with the viewing angle."
   },
   "Ombre Matte": {
     "uuid": "e0f1a2b3-c4d5-6789-0abc-def123456789",
@@ -272,7 +278,8 @@
     "attenuationColor": 16777215,
     "side": 2,
     "blendColor": 0,
-    "map": "assets/textures/ombre_matte_gradient.png"
+    "map": "assets/textures/ombre_matte_gradient.png",
+    "description": "Matte colours fading from one shade at the base to another at the top. Colours are chosen in the tool."
   },
   "Pearlescent": {
     "uuid": "fedcba98-7654-3210-bcde-a9876543210f",
@@ -311,7 +318,8 @@
     "thickness": 0.15,
     "attenuationColor": 16777215,
     "side": 2,
-    "blendColor": 0
+    "blendColor": 0,
+    "description": "Opalescent sheen that shimmers in the light. Smoother than Pearl Color (Uncoated)."
   },
   "Coated Matte": {
     "uuid": "1a2b3c4d-5e6f-7081-92ab-c3d4e5f6a7b8",
@@ -350,7 +358,8 @@
     "thickness": 0.0,
     "attenuationColor": 16777215,
     "side": 2,
-    "blendColor": 0
+    "blendColor": 0,
+    "description": "Smooth, non-reflective painted finish."
   },
   "Rubber Coating": {
     "uuid": "a9b8c7d6-e5f4-3a2b-1c0d-9e8f7a6b5c4d",
@@ -389,7 +398,8 @@
     "thickness": 0.0,
     "attenuationColor": 16777215,
     "side": 2,
-    "blendColor": 0
+    "blendColor": 0,
+    "description": "Soft-touch rubber feel with a matte appearance."
   },
   "Sand Blast": {
     "uuid": "d4c3b2a1-f6e5-4d3c-b2a1-c9e8d7f6a5b4",
@@ -433,7 +443,8 @@
     "normalScale": [
       1.2,
       1.2
-    ]
+    ],
+    "description": "Mildly coarse, rough-touch texture with a matte look."
   },
   "Water Transfer": {
     "uuid": "c1d2e3f4-a5b6-7890-1c2d-3e4f5a6b7c8d",
@@ -478,7 +489,8 @@
     "normalScale": [
       0.8,
       0.8
-    ]
+    ],
+    "description": "Hydro-dipped pattern wrapped around the surface for an organic, varied effect."
   },
   "Standard Natural": {
     "uuid": "c4d3e2f1-a0b9-8765-4321-0fedcba98765",
@@ -517,7 +529,8 @@
     "thickness": 0.6,
     "attenuationColor": 16777215,
     "side": 2,
-    "blendColor": 0
+    "blendColor": 0,
+    "description": "Clear, transparent unpigmented plastic."
   },
   "Matte (Uncoated)": {
     "uuid": "b1c2d3e4-f5a6-7890-1b2c-3d4e5f6a7b8c",
@@ -556,7 +569,8 @@
     "thickness": 1.2,
     "attenuationColor": 14737632,
     "side": 2,
-    "blendColor": 0
+    "blendColor": 0,
+    "description": "Frosted translucent finish - smooth and non-reflective."
   },
   "Pearl Color (Uncoated)": {
     "uuid": "f0e1d2c3-b4a5-6789-0ab1-c2d3e4f5a6b7",
@@ -595,6 +609,7 @@
     "thickness": 0.25,
     "attenuationColor": 16777215,
     "side": 2,
-    "blendColor": 0
+    "blendColor": 0,
+    "description": "Opalescent shimmer with a rougher finish than Pearlescent."
   }
 }
