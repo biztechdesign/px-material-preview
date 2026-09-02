@@ -31,7 +31,7 @@
     // soft contact shadow under the product (fake AO). 0 = off; 0.3-0.5 typical.
     groundShadow: 0.4,
     // how much of the tile's height the product fills on open (0.5..0.95)
-    fit: 0.85,
+    fit: 0.7,
     // true = full bar, "env" = environment dropdown only (tuning stays
     // internal), false = locked look with no bar at all
     showControls: "env"
