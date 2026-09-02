@@ -31,7 +31,7 @@
     // soft contact shadow under the product (fake AO). 0 = off; 0.3-0.5 typical.
     groundShadow: 0.4,
     // how much of the tile's height the product fills on open (0.5..0.95)
-    fit: 0.9,
+    fit: 0.85,
     // true = full bar, "env" = environment dropdown only (tuning stays
     // internal), false = locked look with no bar at all
     showControls: "env"
@@ -249,7 +249,12 @@
             var h = maxY - minY;
             if (!isFinite(h) || h <= 0) return;
             var d = (h / 2) / Math.tan(o.camera.fov * Math.PI / 360) / CONFIG.fit;
-            o.camera.position.setLength(d);
+            // aim at the product's actual middle so it does not sit low in
+            // the tile, and orbit around that point too
+            var cy = (minY + maxY) / 2;
+            o.controls.target.set(0, cy, 0);
+            o.camera.position.set(0, cy + h * 0.03, d);
+            o.camera.lookAt(0, cy, 0);
           } catch (e) { console.warn("fit skipped:", e); }
         });
       }
