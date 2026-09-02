@@ -30,7 +30,9 @@
     backdrop: "radial-gradient(circle at 50% 35%, #ffffff 0%, #ededed 50%, #cccccc 100%)",
     // soft contact shadow under the product (fake AO). 0 = off; 0.3-0.5 typical.
     groundShadow: 0.4,
-    showControls: false // preview build: locked look, no controls
+    // true = full bar, "env" = environment dropdown only (tuning stays
+    // internal), false = locked look with no bar at all
+    showControls: "env"
   };
 
   var NICE_NAMES = {
@@ -129,6 +131,7 @@
       "padding:10px;background:#fff;border-bottom:1px solid #ddd;" +
       "font:13px system-ui,sans-serif";
     if (!CONFIG.showControls) box.style.display = "none";
+    var envOnly = CONFIG.showControls === "env";
 
     var label = document.createElement("label");
     label.textContent = "Environment";
@@ -340,10 +343,12 @@
 
     box.appendChild(label);
     box.appendChild(sel);
-    box.appendChild(intLabel);
-    box.appendChild(slider);
-    box.appendChild(intVal);
-    box.appendChild(toneLabel);
+    if (!envOnly) {                  // tuning stays internal in "env" mode
+      box.appendChild(intLabel);
+      box.appendChild(slider);
+      box.appendChild(intVal);
+      box.appendChild(toneLabel);
+    }
     document.body.insertBefore(box, document.body.firstChild);
   }, 200);
 })();
