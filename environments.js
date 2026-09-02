@@ -22,6 +22,12 @@
   var CONFIG = {
     light: 1.5,        // environment intensity on open (app's old fixed value: 2)
     trueColor: true,   // Khronos PBR Neutral tone mapping on open
+    // canvas backdrop behind the product. The app's own clear colour is #F2F2F2,
+    // which near-white materials disappear into; this soft grey vignette keeps
+    // them readable. Any CSS background value works; null = keep the app's.
+    backdrop: "radial-gradient(circle at 50% 35%, #e3e6ea 0%, #bfc5cd 55%, #9aa1ab 100%)",
+    // soft contact shadow under the product (fake AO). 0 = off; 0.3-0.5 typical.
+    groundShadow: 0.4,
     showControls: false // preview build: locked look, no controls
   };
 
@@ -203,9 +209,98 @@
       if (!v.viewers.length) return;
       clearInterval(tw);
       applyTone();
-      v.viewers.forEach(function (o) { o.scene.environmentIntensity = window.__ENV_INTENSITY__; });
+      v.viewers.forEach(function (o) {
+        o.scene.environmentIntensity = window.__ENV_INTENSITY__;
+        if (CONFIG.backdrop) {
+          // transparent clear so the CSS backdrop shows through the canvas
+          o.renderer.setClearColor(0, 0);
+          if (o.canvas && o.canvas.parentElement)
+            o.canvas.parentElement.style.background = CONFIG.backdrop;
+        }
+      });
       rerender();
     }, 300);
+
+    // --- contact shadow: a radial-gradient plane sat just under the model, so
+    // every product looks grounded instead of floating. Built entirely from
+    // classes borrowed off the live scene (no direct three.js import exists
+    // here), and skipped harmlessly if any of that ever changes.
+    function addGroundShadow(o) {
+      var mesh = null;
+      o.scene.traverse(function (n) { if (!mesh && n.isMesh && n.geometry) mesh = n; });
+      if (!mesh || !o.scene.environment) return false;
+      var V3 = o.camera.position.constructor;
+      var Geo = mesh.geometry.constructor;
+      var Attr = mesh.geometry.attributes.position.constructor;
+      var Tex = o.scene.environment.constructor;
+      var Mat = mesh.material.constructor;
+      var MeshC = mesh.constructor;
+
+      // world-space bounds of the whole model
+      var minX = 1/0, maxX = -1/0, minY = 1/0, minZ = 1/0, maxZ = -1/0;
+      o.scene.traverse(function (n) {
+        if (!n.isMesh || !n.geometry) return;
+        n.geometry.computeBoundingBox();
+        var b = n.geometry.boundingBox;
+        [b.min.x, b.max.x].forEach(function (x) {
+          [b.min.y, b.max.y].forEach(function (y) {
+            [b.min.z, b.max.z].forEach(function (z) {
+              var w = n.localToWorld(new V3(x, y, z));
+              if (w.x < minX) minX = w.x; if (w.x > maxX) maxX = w.x;
+              if (w.y < minY) minY = w.y;
+              if (w.z < minZ) minZ = w.z; if (w.z > maxZ) maxZ = w.z;
+            });
+          });
+        });
+      });
+      var ext = Math.max(maxX - minX, maxZ - minZ);
+      if (!isFinite(ext) || ext <= 0) return false;
+
+      var cv = document.createElement("canvas");
+      cv.width = cv.height = 256;
+      var ctx = cv.getContext("2d");
+      var gr = ctx.createRadialGradient(128, 128, 0, 128, 128, 128);
+      gr.addColorStop(0.0, "rgba(0,0,0," + CONFIG.groundShadow + ")");
+      gr.addColorStop(0.45, "rgba(0,0,0," + CONFIG.groundShadow * 0.4 + ")");
+      gr.addColorStop(1.0, "rgba(0,0,0,0)");
+      ctx.fillStyle = gr;
+      ctx.fillRect(0, 0, 256, 256);
+      var tex = new Tex(cv);
+      tex.needsUpdate = true;
+
+      var s = ext * 0.85;
+      var geo = new Geo();
+      geo.setAttribute("position", new Attr(new Float32Array([-s,0,-s, s,0,-s, -s,0,s, s,0,s]), 3));
+      geo.setAttribute("uv", new Attr(new Float32Array([0,1, 1,1, 0,0, 1,0]), 2));
+      geo.setIndex([0, 2, 1, 1, 2, 3]);
+
+      var mat = new Mat({ map: tex, transparent: true, depthWrite: false });
+      mat.toneMapped = false;
+      mat.side = 2;
+      if ("envMapIntensity" in mat) mat.envMapIntensity = 0;
+      if ("roughness" in mat) mat.roughness = 1;
+      if ("metalness" in mat) mat.metalness = 0;
+      if ("specularIntensity" in mat) mat.specularIntensity = 0;
+
+      var plane = new MeshC(geo, mat);
+      plane.position.set((minX + maxX) / 2, minY - ext * 0.01, (minZ + maxZ) / 2);
+      plane.renderOrder = -1;
+      o.scene.add(plane);
+      return true;
+    }
+    if (CONFIG.groundShadow > 0) {
+      var stries = 0;
+      var stimer = setInterval(function () {
+        var pending = false;
+        v.viewers.forEach(function (o) {
+          if (o.__shadowAdded) return;
+          try { o.__shadowAdded = addGroundShadow(o); }
+          catch (e) { o.__shadowAdded = true; console.warn("ground shadow skipped:", e); }
+          if (!o.__shadowAdded) pending = true;
+        });
+        if (!pending || ++stries > 60) { clearInterval(stimer); rerender(); }
+      }, 500);
+    }
 
     box.appendChild(label);
     box.appendChild(sel);
