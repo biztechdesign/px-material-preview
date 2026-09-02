@@ -30,6 +30,8 @@
     backdrop: "radial-gradient(circle at 50% 35%, #ffffff 0%, #ededed 50%, #cccccc 100%)",
     // soft contact shadow under the product (fake AO). 0 = off; 0.3-0.5 typical.
     groundShadow: 0.4,
+    // how much of the tile's height the product fills on open (0.5..0.95)
+    fit: 0.9,
     // true = full bar, "env" = environment dropdown only (tuning stays
     // internal), false = locked look with no bar at all
     showControls: "env"
@@ -226,6 +228,31 @@
     var tw = setInterval(function () {
       if (!v.viewers.length) return;
       clearInterval(tw);
+      // default zoom: frame the product to CONFIG.fit of the tile height
+      // instead of the app's fixed camera distance
+      if (CONFIG.fit) {
+        v.viewers.forEach(function (o) {
+          try {
+            var minY = 1/0, maxY = -1/0, V3 = o.camera.position.constructor;
+            o.scene.traverse(function (n) {
+              if (!n.isMesh || !n.geometry) return;
+              n.geometry.computeBoundingBox();
+              var b = n.geometry.boundingBox;
+              [b.min.y, b.max.y].forEach(function (y) {
+                [[b.min.x, b.min.z], [b.max.x, b.max.z]].forEach(function (xz) {
+                  var w = n.localToWorld(new V3(xz[0], y, xz[1]));
+                  if (w.y < minY) minY = w.y;
+                  if (w.y > maxY) maxY = w.y;
+                });
+              });
+            });
+            var h = maxY - minY;
+            if (!isFinite(h) || h <= 0) return;
+            var d = (h / 2) / Math.tan(o.camera.fov * Math.PI / 360) / CONFIG.fit;
+            o.camera.position.setLength(d);
+          } catch (e) { console.warn("fit skipped:", e); }
+        });
+      }
       applyTone();
       v.viewers.forEach(function (o) {
         o.scene.environmentIntensity = window.__ENV_INTENSITY__;
