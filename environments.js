@@ -256,19 +256,33 @@
       var ext = Math.max(maxX - minX, maxZ - minZ);
       if (!isFinite(ext) || ext <= 0) return false;
 
+      // product-photo style: a dense contact core right at the base plus a
+      // softer shadow spreading to one side, as if the key light sits
+      // front-left. Drawn in plan view; the 3D plane gives it perspective.
       var cv = document.createElement("canvas");
-      cv.width = cv.height = 256;
+      cv.width = cv.height = 512;
       var ctx = cv.getContext("2d");
-      var gr = ctx.createRadialGradient(128, 128, 0, 128, 128, 128);
-      gr.addColorStop(0.0, "rgba(0,0,0," + CONFIG.groundShadow + ")");
-      gr.addColorStop(0.45, "rgba(0,0,0," + CONFIG.groundShadow * 0.4 + ")");
-      gr.addColorStop(1.0, "rgba(0,0,0,0)");
-      ctx.fillStyle = gr;
-      ctx.fillRect(0, 0, 256, 256);
+      var A = CONFIG.groundShadow;
+      function blob(cx, cy, rx, ry, a) {
+        ctx.save();
+        ctx.translate(cx, cy);
+        ctx.scale(rx / 100, ry / 100);
+        var g = ctx.createRadialGradient(0, 0, 0, 0, 0, 100);
+        g.addColorStop(0, "rgba(0,0,0," + a + ")");
+        g.addColorStop(0.55, "rgba(0,0,0," + a * 0.45 + ")");
+        g.addColorStop(1, "rgba(0,0,0,0)");
+        ctx.fillStyle = g;
+        ctx.beginPath();
+        ctx.arc(0, 0, 100, 0, 6.2832);
+        ctx.fill();
+        ctx.restore();
+      }
+      blob(256, 256, 92, 80, A * 1.2);    // contact core under the base
+      blob(322, 264, 195, 118, A * 0.5);  // soft spread away from the key light
       var tex = new Tex(cv);
       tex.needsUpdate = true;
 
-      var s = ext * 0.85;
+      var s = ext * 1.05;   // wide enough for the sideways spread
       var geo = new Geo();
       geo.setAttribute("position", new Attr(new Float32Array([-s,0,-s, s,0,-s, -s,0,s, s,0,s]), 3));
       geo.setAttribute("uv", new Attr(new Float32Array([0,1, 1,1, 0,0, 1,0]), 2));
