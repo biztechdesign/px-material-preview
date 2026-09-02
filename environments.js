@@ -20,7 +20,7 @@
 --------------------------------------------------------------------------- */
 (function () {
   var CONFIG = {
-    light: 1.5,        // environment intensity on open (app's old fixed value: 2)
+    light: 1.0,        // environment intensity on open (app's old fixed value: 2)
     trueColor: true,   // Khronos PBR Neutral tone mapping on open
     // canvas backdrop behind the product. The app's own clear colour is #F2F2F2,
     // which near-white materials disappear into; this soft grey vignette keeps
@@ -34,11 +34,11 @@
   };
 
   var NICE_NAMES = {
+    "studio.hdr": "Studio",
     "neutral_studio.hdr": "Neutral Studio (true color)",
     "studio_small_03_1k.hdr": "Studio small 1",
     "brown_photostudio_02_1k.hdr": "Brown Photostudio",
     "luminous.hdr": "Luminous",
-    "studio.hdr": "Studio",
     "studio_small_08_4k.hdr": "Studio small 2",
     "qwantani_noon_4k.hdr": "Qwantani Noon",
     "venice_sunrise_4k.hdr": "Venice Sunset",
