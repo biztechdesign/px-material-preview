@@ -34,7 +34,7 @@
     fit: 0.7,
     // true = full bar, "env" = environment dropdown only (tuning stays
     // internal), false = locked look with no bar at all
-    showControls: "env"
+    showControls: false
   };
 
   var NICE_NAMES = {
@@ -259,6 +259,20 @@
         });
       }
       applyTone();
+      // one-line helper under each tile title, from the material's own
+      // "description" field in materials.json (the client's wording)
+      document.querySelectorAll(".viewer-wrapper").forEach(function (wrp) {
+        var h = wrp.querySelector("h3");
+        if (!h || wrp.querySelector(".mat-desc")) return;
+        var def = v.materialDefinitions && v.materialDefinitions[h.textContent.trim()];
+        if (!def || !def.description) return;
+        var dd = document.createElement("div");
+        dd.className = "mat-desc";
+        dd.textContent = def.description;
+        dd.style.cssText = "font:12px/1.45 system-ui,sans-serif;color:#777;" +
+          "text-align:center;max-width:280px;margin:-2px auto 8px;padding:0 12px";
+        h.insertAdjacentElement("afterend", dd);
+      });
       v.viewers.forEach(function (o) {
         o.scene.environmentIntensity = window.__ENV_INTENSITY__;
         if (CONFIG.backdrop) {
