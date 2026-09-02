@@ -160,7 +160,7 @@
     "uuid": "ab12cd34-ef56-7890-1234-56789abcdef0",
     "type": "MeshPhysicalMaterial",
     "name": "Iridescent Metallic",
-    "color": 10066329,
+    "color": 12303291,
     "roughness": 0.05,
     "metalness": 1.0,
     "sheen": 0,
@@ -174,10 +174,10 @@
     "clearcoatRoughness": 0.01,
     "dispersion": 0,
     "iridescence": 1.0,
-    "iridescenceIOR": 2.6,
+    "iridescenceIOR": 2.3,
     "iridescenceThicknessRange": [
-      100,
-      2500
+      120,
+      480
     ],
     "anisotropy": 0,
     "anisotropyRotation": 0,
