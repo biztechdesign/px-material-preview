@@ -36,7 +36,7 @@
   };
 
   var NICE_NAMES = {
-    "studio.hdr": "Studio",
+    "studio_small_09_1k.hdr": "Studio",
     "neutral_studio.hdr": "Neutral Studio (true color)",
     "studio_small_03_1k.hdr": "Studio small 1",
     "brown_photostudio_02_1k.hdr": "Brown Photostudio",
