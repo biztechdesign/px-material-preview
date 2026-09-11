@@ -32,9 +32,32 @@
     groundShadow: 0.4,
     // how much of the tile's height the product fills on open (0.5..0.95)
     fit: 0.7,
+    // stop the orbit at the floor (true) - below it the contact shadow plane is
+    // seen edge-on as a hard line. false = free orbit.
+    floorLock: true,
     // true = full bar, "env" = environment dropdown only (tuning stays
     // internal), false = locked look with no bar at all
-    showControls: false
+    showControls: false,
+    // closure vs body separation when both wear the same finish (client
+    // feedback 2026-09-11). Closure meshes (name matches /closure|cap/i) get a
+    // sibling material: roughness bumped by capRoughness, and the colour value
+    // pushed toward mid-grey by capShift (dark finishes lighten, light finishes
+    // darken). Real caps are knurled and read rougher than bodies in every
+    // catalogue photo, so this is the physically honest cue. 0 = off.
+    capRoughness: 0.14,
+    capShift: 0.09,
+    // clear finishes (transmission > flagThreshold, or alpha glass with
+    // opacity < 0.5) reflect the studio's bright
+    // side walls at grazing angles and read as a white ghost. Product
+    // photographers fix this with black flags either side of a clear bottle;
+    // the same is done here on a copy of the HDR used only by those tiles.
+    // flagDark = brightness left in the flagged band (0 = pure black flags),
+    // flagWidth = fraction of the panorama width each flag covers (0..0.5),
+    // flagBand = vertical band as [top, bottom] fractions of the panorama height.
+    flagThreshold: 0.8,
+    flagDark: 0.10,
+    flagWidth: 0.50,
+    flagBand: [0.40, 0.80]
   };
 
   var NICE_NAMES = {
@@ -50,6 +73,107 @@
 
   // the patched app bundle reads this for every environment it loads
   window.__ENV_INTENSITY__ = CONFIG.light;
+
+  // ---- flagged studio for clear finishes ---------------------------------
+  // The app's RGBELoader decodes to half floats (Uint16). Float textures
+  // render black here (no float-linear filtering on the PMREM path), so the
+  // data is edited in place as half floats with the two converters below.
+  var held;
+  Object.defineProperty(window, "__VIEWER__", {
+    configurable: true,
+    get: function () { return held; },
+    set: function (v) { held = v; }
+  });
+
+  function halfToFloat(h) {
+    var s = (h & 0x8000) ? -1 : 1, e = (h >> 10) & 0x1f, m = h & 0x3ff;
+    if (e === 0) return s * Math.pow(2, -14) * (m / 1024);
+    if (e === 31) return m ? NaN : s * Infinity;
+    return s * Math.pow(2, e - 15) * (1 + m / 1024);
+  }
+  var f32 = new Float32Array(1), u32 = new Uint32Array(f32.buffer);
+  function floatToHalf(val) {
+    f32[0] = val; var x = u32[0];
+    var sign = (x >> 16) & 0x8000, exp = ((x >> 23) & 0xff) - 127 + 15, man = x & 0x7fffff;
+    if (exp <= 0) { if (exp < -10) return sign; man = (man | 0x800000) >> (1 - exp); return sign | ((man + 0x1000) >> 13); }
+    if (exp >= 31) return sign | 0x7c00;
+    return sign | (exp << 10) | ((man + 0x1000) >> 13);
+  }
+
+  // Given the loaded equirect DataTexture, return a copy with the side bands
+  // darkened. Called once per environment load; null = feature off.
+  window.__FLAGGED_ENV__ = function (tex) {
+    // window.__FLAG_OVERRIDE__ = {flagWidth, flagDark, flagBand} lets you tune
+    // live from the console, then call __VIEWER__.loadEnvironment(__VIEWER__.selectedEnvironment)
+    var F = Object.assign({}, CONFIG, window.__FLAG_OVERRIDE__ || {});
+    if (!F.flagWidth || !tex || !tex.image || !tex.image.data) return null;
+    var img = tex.image, w = img.width, h = img.height, src = img.data;
+    var isHalf = src instanceof Uint16Array, isFloat = src instanceof Float32Array;
+    if (!isHalf && !isFloat) return null;
+    var data = isHalf ? new Uint16Array(src) : new Float32Array(src);   // copy, never touch the original
+    var ch = data.length / (w * h);                                        // 3 or 4
+    var band0 = Math.floor(h * F.flagBand[0]), band1 = Math.ceil(h * F.flagBand[1]);
+    var half = F.flagWidth / 2, dark = F.flagDark;
+    // equirect: u=0.25 and u=0.75 are the two side walls (u=0.5 faces the camera
+    // in three's default orientation, u=0/1 behind the product).
+    var centres = [0.25, 0.75];
+    for (var y = band0; y < band1; y++) {
+      // soft top/bottom edge so the flag does not print a hard line into reflections
+      var vy = (y - band0) / (band1 - band0);
+      var vEdge = Math.min(1, Math.min(vy, 1 - vy) * 6);
+      for (var x = 0; x < w; x++) {
+        var u = x / w, wgt = 0;
+        for (var i = 0; i < 2; i++) {
+          var d = Math.abs(u - centres[i]); d = Math.min(d, 1 - d);
+          if (d < half) { var t = 1 - d / half; wgt = Math.max(wgt, Math.min(1, t * 4)); }
+        }
+        if (!wgt) continue;
+        var k = 1 - (1 - dark) * wgt * vEdge;
+        var o = (y * w + x) * ch;
+        for (var c = 0; c < 3; c++) {
+          data[o + c] = isHalf ? floatToHalf(halfToFloat(data[o + c]) * k) : data[o + c] * k;
+        }
+      }
+    }
+    // clone() shares the Source object, and `image` is a getter onto it - assigning
+    // out.image would overwrite the ORIGINAL studio's pixels too. Give the copy
+    // its own Source (same class, constructed from the new image object).
+    var out = tex.clone();
+    var img2 = { data: data, width: w, height: h };
+    out.source = tex.source ? new tex.source.constructor(img2) : img2;
+    if (!tex.source) out.image = img2;
+    out.needsUpdate = true;
+    return out;
+  };
+
+  // Which tiles take the flagged copy: any tile whose finish is clear.
+  window.__USE_FLAGGED__ = function (viewer) {
+    var v = held, defs = v && v.materialDefinitions, name = viewer && viewer.materialName;
+    var def = defs && defs[name];
+    return !!(def && (def.transmission > CONFIG.flagThreshold || (def.transparent && def.opacity < 0.5)));
+  };
+
+  // the patched bundle calls this once per tile with the parsed body material
+  // and its JSON definition; return the material to use on closure meshes.
+  window.__CAP_MATERIAL__ = function (body, def) {
+    if (!(CONFIG.capRoughness || CONFIG.capShift)) return body;
+    var cap = body.clone();
+    cap.name = (body.name || "") + " (closure)";
+    cap.roughness = Math.min(1, body.roughness + CONFIG.capRoughness);
+    if (cap.clearcoat) cap.clearcoatRoughness = Math.min(1, body.clearcoatRoughness + CONFIG.capRoughness * 0.5);
+    if (CONFIG.capShift && body.color) {
+      var c = body.color;
+      var lum = 0.2126 * c.r + 0.7152 * c.g + 0.0722 * c.b;
+      // fully transmissive finishes carry no body colour to shift - leave them
+      if (!(body.transmission > 0.8 || (body.transparent && body.opacity < 0.5))) {
+        var k = lum > 0.5 ? 1 - CONFIG.capShift : 1 + CONFIG.capShift * 3;
+        cap.color = c.clone().multiplyScalar(k);
+        cap.color.r = Math.min(1, cap.color.r); cap.color.g = Math.min(1, cap.color.g); cap.color.b = Math.min(1, cap.color.b);
+      }
+    }
+    cap.needsUpdate = true;
+    return cap;
+  };
 
   function prettify(file) {
     return file
@@ -388,6 +512,7 @@
       plane.position.set((minX + maxX) / 2, minY - ext * 0.01, (minZ + maxZ) / 2);
       plane.renderOrder = -1;
       o.scene.add(plane);
+      if (CONFIG.floorLock && o.controls) o.controls.maxPolarAngle = Math.PI / 2 - 0.03;
       return true;
     }
     if (CONFIG.groundShadow > 0) {
