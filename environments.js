@@ -155,6 +155,36 @@
 
   // the patched bundle calls this once per tile with the parsed body material
   // and its JSON definition; return the material to use on closure meshes.
+  // Window cutout (2026-10-07): a finish with `alphaMap` is chrome with holes. Put a clear copy of each
+  // non-closure mesh just inside it so the holes show base plastic, and hide the label bands (they would
+  // otherwise sit over the holes). Called by bundle patch 9 after a finish is applied to a scene.
+  window.__POST_APPLY__ = function (scene, def, mat) {
+    if (!def || !def.alphaMap) return;
+    var base = mat.clone();
+    base.alphaMap = null; base.alphaTest = 0; base.map = null; base.normalMap = null;
+    base.metalness = 0; base.roughness = 0; base.color.set(0xffffff); base.specularColor && base.specularColor.set(0xffffff);
+    base.transparent = true; base.opacity = 0.18; base.depthWrite = false; base.side = 2; base.iridescence = 0; base.needsUpdate = true;
+    var adds = [];
+    scene.traverse(function (o) {
+      if (!o.isMesh) return;
+      if (/label/i.test(o.name)) { o.visible = false; return; }
+      if (/closure|cap/i.test(o.name)) return;
+      // the CAD body UV is not a clean wrap, so give the body a cylindrical UV for the mask:
+      // u = angle around Y (0.5 faces the camera), v = height. Position reads work for interleaved data too.
+      var g = o.geometry = o.geometry.clone(), pa = g.attributes.position, n = pa.count, ymin = Infinity, ymax = -Infinity;
+      for (var i = 0; i < n; i++) { var y = pa.getY(i); if (y < ymin) ymin = y; if (y > ymax) ymax = y; }
+      var uv = new Float32Array(n * 2);
+      for (var i = 0; i < n; i++) {
+        uv[2 * i] = Math.atan2(pa.getX(i), pa.getZ(i)) / (2 * Math.PI) + 0.5;
+        uv[2 * i + 1] = 1 - (pa.getY(i) - ymin) / ((ymax - ymin) || 1);   // flipY=false: image row 0 is v=0
+      }
+      g.setAttribute('uv', new g.index.constructor(uv, 2));
+      var inner = o.clone(); inner.material = base; inner.scale.multiplyScalar(0.995); inner.renderOrder = -1;
+      adds.push([o, inner]);
+    });
+    adds.forEach(function (p) { p[0].parent.add(p[1]); });
+  };
+
   window.__CAP_MATERIAL__ = function (body, def) {
     if (!(CONFIG.capRoughness || CONFIG.capShift)) return body;
     var cap = body.clone();
@@ -443,7 +473,11 @@
       if (!mesh || !o.scene.environment) return false;
       var V3 = o.camera.position.constructor;
       var Geo = mesh.geometry.constructor;
-      var Attr = mesh.geometry.attributes.position.constructor;
+      // a quantized GLB (KHR_mesh_quantization) interleaves its vertex data, so
+      // position is an InterleavedBufferAttribute; the index is always a plain
+      // BufferAttribute, which is the class the shadow plane needs.
+      var pa = mesh.geometry.attributes.position;
+      var Attr = (pa.isInterleavedBufferAttribute && mesh.geometry.index) ? mesh.geometry.index.constructor : pa.constructor;
       var Tex = o.scene.environment.constructor;
       var Mat = mesh.material.constructor;
       var MeshC = mesh.constructor;
